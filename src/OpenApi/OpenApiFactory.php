@@ -52,6 +52,11 @@ class OpenApiFactory implements OpenApiFactoryInterface//
             ]
         ]);
 
+        // ancienne maniere de desactiver parametre demander dans route presente de vue apiplatform
+        $meOperation = $openApi->getPaths()->getPath('/api/me')->getGet()->withParameters([]);
+        $mePathItem = $openApi->getPaths()->getPath('/api/me')->withGet($meOperation);
+        $openApi->getPaths()->addPath('/api/me', $mePathItem);
+
         $pathItem = new PathItem(
             post: new Operation(
                 operationId: 'postApiLogin',
@@ -81,6 +86,18 @@ class OpenApiFactory implements OpenApiFactoryInterface//
         );
 
         $openApi->getPaths()->addPath('/api/login', $pathItem);
+
+        $pathItem = new PathItem(
+            post: new Operation(
+                operationId: 'postApiLogout',
+                tags: ['Auth'],
+                responses: [
+                    '204' => []
+                ]
+            )
+        );
+
+        $openApi->getPaths()->addPath('/api/logout', $pathItem);
 
         return $openApi;
     }
