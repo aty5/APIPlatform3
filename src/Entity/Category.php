@@ -13,7 +13,15 @@ use Symfony\Component\Validator\Constraints\Length;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ApiResource(
-    collectionOperations: ['get', 'post'],
+    collectionOperations: [
+        'get' => [
+            'normalization_context' => [
+                'groups' => ['read:collection', 'read:item', 'read:Post'],
+                'openapi_definition_name' => "Detail" //convention
+            ]
+        ],
+        'post'
+    ],
     itemOperations: ['put',
         'patch',
         'delete',
@@ -39,6 +47,7 @@ class Category
     #[Groups(['read:Post', 'write:Post'])]
     private ?string $name = null;
 
+    #[Groups(['read:Post', 'write:Post'])]
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Post::class)]
     private Collection $posts;
 

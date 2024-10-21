@@ -19,82 +19,83 @@ use Symfony\Component\Validator\Constraints\Valid;
 // dans l'attribut ci-dessous, ne pas hesiter a creer des fonctions pour garder au propre l en tete de classe
 #[
     ApiResource(
-    collectionOperations: [
-        'get',
-        'post',
-        'count' => [
-            'method' => 'GET',
-            'path' => '/posts/count',
-            'controller' => PostCountController::class,
-            'pagination_enabled' => false,
-            'filters' => [],
-            'openapi_context' => [
-                'summary' => 'Récupere le nombre total d\'article',
-                'parameters' => [
-                    [
-                        'in' => 'query',
-                        'name' => 'online',
-                        'schema' => [
-                            'type' => 'integer',
-                            'maximum' => 1,
-                            'minimum' => 0
-                        ],
-                        'description' => 'Filtre les articles en ligne'
-                    ]
-                ],
-                'responses' => [
-                    '200' => [
-                        'description' => 'OK',
-                        'content' => [
-                            'application/json' => [
-                                'schema' => [
-                                    'type' => 'integer',
-                                    'example' => 3
+        collectionOperations: [
+            'get',
+            'post',
+            'count' => [
+                'method' => 'GET',
+                'path' => '/posts/count',
+                'controller' => PostCountController::class,
+                'pagination_enabled' => false,
+                'filters' => [],
+                'openapi_context' => [
+                    'summary' => 'Récupere le nombre total d\'article',
+                    'parameters' => [
+                        [
+                            'in' => 'query',
+                            'name' => 'online',
+                            'schema' => [
+                                'type' => 'integer',
+                                'maximum' => 1,
+                                'minimum' => 0
+                            ],
+                            'description' => 'Filtre les articles en ligne'
+                        ]
+                    ],
+                    'responses' => [
+                        '200' => [
+                            'description' => 'OK',
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        'type' => 'integer',
+                                        'example' => 3
+                                    ]
                                 ]
                             ]
                         ]
                     ]
-                ]
-            ]//,
-            //'write' => false options de personnalisations, permet de controler le fonctionnement
-        ]
-    ],
-    itemOperations: [
-        'put',
-        'delete',
-        'get' => [
-            'normalization_context' => [
-                'groups' => ['read:collection', 'read:item', 'read:Post'],
-                'openapi_definition_name' => "Detail" //convention
+                ]//,
+                //'write' => false options de personnalisations, permet de controler le fonctionnement
             ]
         ],
-        'publish' => [
-            'method' => 'POST',
-            'path' => '/posts/{id}/publish',
-            'controller' => PostPublishController::class,
-            //'write' => false options de personnalisations, permet de controler le fonctionnement
-            //'read' => false options de personnalisations, permet de controler le fonctionnement
-            'openapi_context' => [ //specifications openAPI pour bien documenter
-                'summary' => 'Permet de publier un article',
-                'requestBody' => [
-                    'content' => [
-                        'application/json' => [
-                            'schema' => ['']
-                        ]
-                     ]
+        itemOperations: [
+            'put',
+            'delete',
+            'patch',
+            'get' => [
+                'normalization_context' => [
+                    'groups' => ['read:collection', 'read:item', 'read:Post'],
+                    'openapi_definition_name' => "Detail" //convention
                 ]
-            ]
-        ]
-    ],
-    denormalizationContext: ['groups' => ['write:Post']],
-    normalizationContext: [
-        'groups' => ['read:collection'],
-        'openapi_definition_name' => "Collection" //convention
-    ],
-    paginationClientItemsPerPage: true,
-    paginationItemsPerPage: 5,
-    paginationMaximumItemsPerPage: 5
-),
+            ],
+            'publish' => [
+                'method' => 'POST',
+                'path' => '/posts/{id}/publish',
+                'controller' => PostPublishController::class,
+                //'write' => false options de personnalisations, permet de controler le fonctionnement
+                //'read' => false options de personnalisations, permet de controler le fonctionnement
+                'openapi_context' => [ //specifications openAPI pour bien documenter
+                    'summary' => 'Permet de publier un article',
+                    'requestBody' => [
+                        'content' => [
+                            'application/json' => [
+                                'schema' => ['']
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+        ],
+        denormalizationContext: ['groups' => ['write:Post']],
+        normalizationContext: [
+            'groups' => ['read:collection'],
+            'openapi_definition_name' => "Collection" //convention
+        ],
+        paginationClientItemsPerPage: true,
+        paginationItemsPerPage: 5,
+        paginationMaximumItemsPerPage: 5
+    ),
     ApiFilter(SearchFilter::class, properties: ['id' => 'exact', 'title' => 'partial'])
 ]
 class Post
@@ -130,7 +131,7 @@ class Post
     #[Valid()]
     private ?Category $category = null;
 
-    #[ORM\Column(options:['default' => 0])]
+    #[ORM\Column(options: ['default' => 0])]
     #[
         Groups(['read:collection']),
         ApiProperty(openapiContext: ['type' => 'boolean', 'description' => 'En ligne ou pas ?'])
