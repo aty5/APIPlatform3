@@ -16,6 +16,8 @@ class MeController
     public function __invoke()
     {
         $user = $this->security->getUser();
+        //dd($user);
+
         return $user;
     }
 }

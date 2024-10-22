@@ -20,7 +20,11 @@ use Symfony\Component\Validator\Constraints\Valid;
 #[
     ApiResource(
         collectionOperations: [
-            'get',
+            'get' => [
+                'openapi_context' => [ // bloquer une seule route
+                    'security' => [['bearerAuth' => []]]
+            ]
+            ],
             'post',
             'count' => [
                 'method' => 'GET',
